@@ -9,11 +9,7 @@ private[gettingstarted] object Exercises {
    */
   def fib(n: Int): Int = {
     @tailrec
-    def go(n: Int, prev: Int, cur: Int): Int =
-      if (n == 0) prev
-      else go(n - 1, cur, prev + cur)
-
-    go(n, 0, 1)
+    def go(): Int = ???
   }
 
   /*
@@ -21,13 +17,7 @@ private[gettingstarted] object Exercises {
    */
   def isSorted[A](as: Array[A], ordered: (A,A) => Boolean): Boolean = {
     @tailrec
-    def go(i: Int): Boolean = {
-      if (i == as.length - 1) true
-      else if (!ordered(as(i), as(i + 1))) false
-      else go(i + 1)
-    }
-
-    go(0)
+    def go(): Boolean = ???
   }
 
   /*
@@ -35,17 +25,17 @@ private[gettingstarted] object Exercises {
    * function of one argument that partially applies f. Here again there’s only one implementation that compiles.
    * Write this implementation.
    */
-  def curry[A, B, C](f: (A, B) => C): A => B => C = a => b => f(a,b)
+  def curry[A, B, C](f: (A, B) => C): A => B => C = ???
 
   /*
    * Implement uncurry, which reverses the transformation of curry.
    */
-  def uncurry[A, B, C](f: A => B => C): (A, B) => C = f(_)(_)
+  def uncurry[A, B, C](f: A => B => C): (A, B) => C = ???
 
   /*
    * Implement the higher-order function that composes two functions.
    */
-  def compose[A,B,C](f: B => C, g: A => B): A => C = a => f(g(a))
+  def compose[A,B,C](f: B => C, g: A => B): A => C = ???
 
 }
 
