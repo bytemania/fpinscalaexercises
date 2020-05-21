@@ -11,32 +11,49 @@ package fpinscala.adt {
     def dropWhile(f: A => Boolean): List[A] = List.dropWhile(this, f)
     def append[B >: A](l1: List[B]): List[B] = List.append(this, l1)
     def length: Int = List.length(this)
-    def foldRight[B](z:B)(f: (A,B) => B): B = List.foldRight(this, z)(f)
-    def foldLeft[B](z:B)(f: (B,A) => B): B = List.foldLeft(this, z)(f)
+    def foldRight[B](z: B)(f: (A, B) => B): B = List.foldRight(this, z)(f)
+    def foldLeft[B](z: B)(f: (B, A) => B): B = List.foldLeft(this, z)(f)
     def reverse: List[A] = List.reverse(this)
     def init: List[A] = List.init(this)
     def map[B](f: A => B): List[B] = List.map(this)(f)
     def filter(p: A => Boolean): List[A] = List.filter(this)(p)
     def flatMap[B](f: A => List[B]): List[B] = List.flatMap(this)(f)
-    def zipWith[B,C](l: List[B])(f:(A,B) => C): List[C] = List.zipWith(this,l)(f)
+    def zipWith[B, C](l: List[B])(f: (A, B) => C): List[C] = List.zipWith(this, l)(f)
+    def hasSubsequence[B >: A](sub: List[B]): Boolean = List.hasSubsequence(this, sub)
 
     def take(n: Int): List[A] = {
       def loop(n: Int, l: List[A]): List[A] = (n, l) match {
-        case (0,_) => Nil
+        case (0, _) => Nil
         case (_, Nil) => Nil
-        case (n, Cons(h,t)) => Cons(h, loop(n - 1, t))
+        case (n, Cons(h, t)) => Cons(h, loop(n - 1, t))
       }
+
       loop(n, this)
     }
 
-    def takeWhile(p:A => Boolean): List[A] = this match {
-      case Cons(h,t) if p(h) => Cons(h, t.takeWhile(p))
+    def takeWhile(p: A => Boolean): List[A] = this match {
+      case Cons(h, t) if p(h) => Cons(h, t.takeWhile(p))
       case _ => Nil
     }
 
-    def forall(p:A => Boolean): Boolean = this.foldRight(true)(p(_) && _)
+    def forall(p: A => Boolean): Boolean = this.foldRight(true)(p(_) && _)
 
     def exists(p: A => Boolean): Boolean = this.foldRight(false)(p(_) || _)
+
+    def scanLeft[B](z: B)(next: (B, A) => B): List[B] = this match {
+      case Nil => Cons(z, Nil)
+      case Cons(h, t) => Cons(z, t.scanLeft(next(z, h))(next))
+    }
+
+    def scanRight[B](z: B)(next: (A, B) => B): List[B] = this match {
+      case Nil => Cons(z, Nil)
+      case Cons(h, t) =>
+        val l = t.scanRight(z)(next)
+        l match {
+          case Nil => Nil
+          case l@Cons(b, _) => Cons(next(h, b), l)
+        }
+    }
   }
 
   object List {
@@ -220,6 +237,23 @@ package fpinscala.adt {
       case (Cons(ha,ta), Cons(hb, tb)) => Cons(f(ha,hb), zipWith(ta, tb)(f))
       case _ => Nil
     }
+
+    /*
+     * Not so Hard: As an example, implement hasSubsequence for checking whether a List
+     * contains another List as a subsequence.
+     * For instance, List(1,2,3,4) would have List(1,2), List(2,3), and List(4) as subsequences, among others.
+     */
+    def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+      @tailrec
+      def loop(list: List[A], sublist: List[A]): Boolean = (list, sublist) match {
+        case (_, Nil) => true
+        case (Nil, _) => false
+        case (Cons(hl, tl), Cons(hs, ts)) => if (hl == hs) loop(tl, ts) else loop(tl, sublist)
+      }
+      loop(sup, sub)
+    }
+
+
   }
 }
 

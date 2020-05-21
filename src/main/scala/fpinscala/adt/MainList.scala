@@ -15,6 +15,8 @@ package fpinscala.adt {
     assert(List(1,2,3).forall(_ < 5))
     assert(!List(1,2,3).exists(_ == 5))
     assert(List(1,2,3).exists(_ == 2))
+    assert(List(1,2,3).scanLeft(0)(_ + _) == List(0,1,3,6))
+    assert(List(1,2,3).scanRight(0)(_ + _) == List(6,5,3,0))
 
     assert(List.fill(4, 3) == List(3,3,3,3))
     assert(List.sum(List(1,2,3,4)) == 10)
@@ -46,5 +48,7 @@ package fpinscala.adt {
     assert(List.filterViaFlatMap(List(1,2,3,4,5))(x => x > 1 && x < 4) == List(2,3))
     assert(List.mergeList(List(1,2,3), List(4,5,6)) == List(5,7,9))
     assert(List(1,2,3).zipWith(List("un","deux", "trois"))((_,_)) == List((1,"un"),(2, "deux"),(3,"trois")))
+    assert(List(1,2,3,4).hasSubsequence(List(2,3)))
+    assert(!List(1,2,3,4).hasSubsequence(List(23)))
   }
 }
