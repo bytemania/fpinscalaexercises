@@ -66,36 +66,46 @@ package fpinscala.adt {
       case n => Cons(a, fill(n - 1, a))
     }
 
-    def sum(ints: List[Int]): Int = ???
+    def sum(ints: List[Int]): Int = foldLeft(ints, 0)(_ + _)
 
-    def product(ds: List[Double]): Double = ???
+    def product(ds: List[Double]): Double = foldLeft(ds, 1.0)(_ * _)
 
-    def length[A](l: List[A]): Int = ???
+    def length[A](l: List[A]): Int = foldLeft(l, 0)((b, _) => b + 1)
 
     /*
      * Implement the function tail for removing the first element of a List.
      */
-    def tail[A](l: List[A]): List[A] = ???
+    def tail[A](l: List[A]): List[A] = drop(l, 1)
 
     /*
      * Using the same idea, implement the function setHead for replacing the first element of a List with a different value.
      */
-    def setHead[A](l: List[A], a: A): List[A] = ???
+    def setHead[A](l: List[A], a: A): List[A] = Cons(a, tail(l))
 
     /*
      * Generalize tail to the function drop, which removes the first n elements from a list.
      */
-    //@tailrec
-    //@throws(classOf[IllegalArgumentException])
-    def drop[A](l: List[A], n: Int): List[A] = ???
+    @tailrec
+    @throws(classOf[IllegalArgumentException])
+    def drop[A](l: List[A], n: Int): List[A] = (l, n) match {
+      case (Nil, n) if n > 0 => throw new IllegalArgumentException("Empty List")
+      case (l, 0) => l
+      case (Cons(_, t), n) => drop(t, n -1)
+    }
 
     /*
      * Implement dropWhile, which removes elements from the List prefix as long as they match a predicate.
      */
-    //@tailrec
-    def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
+    @tailrec
+    def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+      case Cons(h, t) if f(h) => dropWhile(t, f)
+      case _ => l
+    }
 
-    def append[A](a1: List[A], a2: List[A]): List[A] = ???
+    def append[A](a1: List[A], a2: List[A]): List[A] = a1 match {
+      case Nil => a2
+      case Cons(h, t) => Cons(h, append(t, a2))
+    }
 
     /*
      * Implement a function, init, that returns a List consisting of all but the last element of a List.
@@ -109,8 +119,11 @@ package fpinscala.adt {
      * 1) Define foldLeft
      * 2) Write sum, product and the length using foldLeft
      */
-    //@tailrec
-    def foldLeft[A,B](l: List[A], z: B)(f: (B,A) => B): B = ???
+    @tailrec
+    def foldLeft[A,B](l: List[A], z: B)(f: (B,A) => B): B = l match {
+      case Nil => z
+      case Cons(h,t) => foldLeft(t, f(z,h))(f)
+    }
 
     /*
      * Write a function that returns the reverse of a list (given List(1,2,3) it returns List(3,2,1)).
